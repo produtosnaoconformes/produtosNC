@@ -1,0 +1,681 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Belgo Arames - Controle de Produtos</title>
+
+<link rel="stylesheet" href="style.css">
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+
+</head>
+
+<body>
+
+<!-- MENU -->
+
+<header>
+
+<div class="logo">
+<h2>Belgo Arames</h2>
+<p>Controle de Produtos</p>
+</div>
+
+<nav>
+
+<button onclick="mostrarTela('dashboard')">
+🏠 Início
+</button>
+
+<button onclick="mostrarTela('cadastro')">
+📦 Cadastrar
+</button>
+
+<button onclick="mostrarTela('visualizar')">
+👁 Visualizar
+</button>
+
+<button onclick="mostrarTela('modificar')">
+✏ Modificar
+</button>
+
+<button onclick="mostrarTela('latonados')">
+🧵 Latonados
+</button>
+
+<button onclick="mostrarTela('dashboardLatonados')">
+📊 Dashboard Latonados
+</button>
+
+<button onclick="mostrarTela('usuarios')">
+🔐 Acessos
+</button>
+
+<button onclick="logout()">
+🚪 Sair
+</button>
+
+</nav>
+
+</header>
+
+<!-- LOGIN -->
+
+<section id="login" class="pagina">
+
+<div class="card-login">
+
+<h2>Área Restrita</h2>
+
+<input
+type="text"
+id="loginUsuario"
+placeholder="Usuário">
+
+<input
+type="password"
+id="loginSenha"
+placeholder="Senha">
+
+<button onclick="login()">
+Entrar
+</button>
+
+</div>
+
+</section>
+
+<!-- DASHBOARD -->
+
+<section
+id="dashboard"
+class="pagina oculto">
+
+<h1>Monitoramento de Produtos</h1>
+
+<div class="cards">
+
+<div class="card">
+<h2 id="totalProdutos">0</h2>
+<p>Total de Caixas</p>
+</div>
+
+<div class="card">
+<h2 id="totalSucata">0</h2>
+<p>Sucata</p>
+</div>
+
+<div class="card">
+<h2 id="totalRecuperacao">0</h2>
+<p>Recuperação</p>
+</div>
+
+<div class="card">
+<h2 id="totalNaoIdentificado">0</h2>
+<p>Não Identificado</p>
+</div>
+
+<div class="card">
+<h2 id="pesoTotal">0</h2>
+<p>Peso Total</p>
+</div>
+
+</div>
+
+<div class="grafico">
+<canvas id="graficoCategoria"></canvas>
+</div>
+
+</section>
+
+<!-- CADASTRO -->
+
+<section
+id="cadastro"
+class="pagina oculto">
+
+<h2>Cadastro de Produto</h2>
+
+<input
+type="text"
+id="caixa"
+placeholder="Número da Caixa">
+
+<input
+list="listaProdutos"
+id="descricao"
+placeholder="Descrição do Produto">
+
+<datalist id="listaProdutos">
+
+<option value="3x0,22+9x0,20 | 5315-5316 | 1886">
+<option value="9X0,32 | 5268-5269 | 1895 | 3/6">
+<option value="2x0.295 | 1010-1011 | WL">
+<option value="3+8x0.35 | 2012-2013 | MKC">
+<option value="3X0.20+6X0.35 | 5583-5584 | MJY">
+<option value="3x0.22 B80 | 5448-5449 |1699">
+<option value="3X0,22 B40 | 5551-5552 |1699">
+<option value="3x0,22+9x0,20+15 | 5580-5581 | UM">
+<option value="3x0.24+9x0.225 | 5394-5395 | 1864">
+<option value="2+7x0.22+0.15 | 5577-5576 | 1697">
+
+</datalist>
+
+<select id="bobina">
+
+<option>B60</option>
+<option>B40</option>
+<option>NÃO IDENTIFICADO</option>
+
+</select>
+
+<select id="categoria">
+
+<option>SUCATA A PARTE</option>
+<option>RECUPERAÇÃO</option>
+<option>NÃO IDENTIFICADO</option>
+
+</select>
+
+<input
+type="number"
+id="peso"
+placeholder="Peso">
+
+<input
+type="text"
+id="localizacao"
+placeholder="Localização">
+
+<textarea
+id="observacao"
+placeholder="Observação"></textarea>
+
+<button onclick="salvarProduto()">
+Salvar Produto
+</button>
+
+</section>
+
+<!-- VISUALIZAR -->
+
+<section
+id="visualizar"
+class="pagina oculto">
+
+<h2>Visualizar Produtos</h2>
+
+<div class="filtros">
+
+<input
+type="text"
+id="filtroCaixa"
+placeholder="Pesquisar Caixa"
+onkeyup="filtrarProdutos()">
+
+<input
+type="text"
+id="filtroDescricao"
+placeholder="Pesquisar Descrição"
+onkeyup="filtrarProdutos()">
+
+<select
+id="filtroCategoria"
+onchange="filtrarProdutos()">
+
+<option value="">
+Todas Categorias
+</option>
+
+<option value="SUCATA A PARTE">
+SUCATA A PARTE
+</option>
+
+<option value="RECUPERAÇÃO">
+RECUPERAÇÃO
+</option>
+
+<option value="NÃO IDENTIFICADO">
+NÃO IDENTIFICADO
+</option>
+
+</select>
+
+</div>
+
+<button onclick="exportarExcel()">
+📥 Exportar Excel
+</button>
+
+<button>
+<input
+type="file"
+id="excel"
+onchange="importarExcel(event)">
+</button>
+
+<table>
+
+<thead>
+
+<tr>
+
+<th>Caixa</th>
+<th>Descrição</th>
+<th>Bobina</th>
+<th>Categoria</th>
+<th>Peso</th>
+<th>Usuário</th>
+<th>Local</th>
+<th>Observação</th>
+
+<th>Cadastrado Por</th>
+<th>Data Cadastro</th>
+<th>Alterado Por</th>
+<th>Data Alteração</th>
+<th>Ações</th>
+
+</tr>
+
+</thead>
+
+<tbody id="tabelaProdutos">
+
+</tbody>
+
+</table>
+
+</section>
+
+<!-- MODIFICAR -->
+
+<section
+id="modificar"
+class="pagina oculto">
+
+<h2>Modificar Produtos</h2>
+
+<table>
+
+<thead>
+
+<tr>
+
+<th>Caixa</th>
+<th>Descrição</th>
+<th>Categoria</th>
+<th>Ações</th>
+
+</tr>
+
+</thead>
+
+<tbody id="tabelaEditar">
+
+</tbody>
+
+</table>
+
+</section>
+
+<!--LATONADOS-->
+
+<section
+id="latonados"
+class="pagina oculto">
+
+<h2>Cadastro de Bobinas de Matéria-Prima</h2>
+
+<input
+type="text"
+id="etiquetaLatonado"
+placeholder="Número da Etiqueta">
+
+<select id="descricaoLatonado">
+
+<option value="">Selecione</option>
+
+<option>0,78 HTAP-222</option>
+
+<option>1,10 HTAP 111</option>
+
+<option>1,10 NTD-111</option>
+
+<option>1,25 HTAP-112</option>
+
+<option>1,25 HTDD-222</option>
+
+<option>1,25 NTDP 611</option>
+
+<option>1,25 NTDP-111</option>
+
+<option>1,34 NTDD-222</option>
+
+<option>1,40 HTAP-111</option>
+
+<option>1,44 HTDD-625</option>
+
+<option>1,44 NTDD-611</option>
+
+<option>1,52 HTDP-111</option>
+
+<option>1,52 NTDD-112</option>
+
+<option>1,60 HTDD-444</option>
+
+<option>1,67 HTDD-112</option>
+
+<option>1,67 HTDD-611</option>
+
+<option>1,67 NTDD-211</option>
+
+<option>1,90 HTDD-222</option>
+
+<option>1,90 HTDD-611</option>
+
+<option>2,00 UCAD-611</option>
+
+<option>2,00 UCAD-625</option>
+
+<option>2,02 HTDD-611</option>
+
+<option>NÃO IDENTIFICADO</option>
+
+<option>OUTRO</option>
+
+</select>
+
+<input
+id="novoMaterial"
+placeholder="Novo Material"
+style="display:none;">
+
+<select id="situacaoLatonado">
+
+<option>SEGUNDA QUALIDADE</option>
+
+<option>AGUARDANDO ANALISE</option>
+
+<option>AO CUIDADO DO LIDER</option>
+
+<option>NÃO IDENTIFICADO</option>
+
+<option>DIRECIONADO</option>
+
+<option>AOS CUIDADOS DA QUALIDADE</option>
+
+<option>PARADO</option>
+
+</select>
+
+<select id="tipoBobinaLatonado">
+
+<option>WS550</option>
+
+<option>WS750</option>
+
+</select>
+
+<select id="quantidadeLatonado">
+
+<option>CHEIA</option>
+
+<option>MEDIA</option>
+
+<option>POUCO MATERIAL</option>
+
+</select>
+
+<select id="localizacaoLatonado">
+
+<option>ESTOQUE LOGISTICA</option>
+
+<option>PRÉDIO 22</option>
+
+<option>MEET</option>
+
+<option>MEET NDW</option>
+
+<option>NA MAQUINA</option>
+
+</select>
+
+<input
+id="linhaLatonado"
+placeholder="Número da Linha"
+style="display:none;">
+
+<input
+id="maquinaLatonado"
+placeholder="Número da Máquina"
+style="display:none;">
+
+<button onclick="salvarLatonado()">
+Salvar Bobina
+</button>
+
+<h3>Bobinas Cadastradas</h3>
+
+<input
+type="text"
+id="filtroEtiqueta"
+placeholder="Pesquisar Etiqueta"
+onkeyup="listarLatonados()">
+
+<button onclick="exportarLatonados()">
+📥 Exportar Latonados
+</button>
+
+<table>
+
+<thead>
+<tr>
+<th>Etiqueta</th>
+<th>Descrição</th>
+<th>Situação</th>
+<th>Tipo</th>
+<th>Quantidade</th>
+<th>Localização</th>
+<th>Cadastrado Por</th>
+<th>Data Cadastro</th>
+<th>Alterado Por</th>
+<th>Data Alteração</th>
+<th>Ações</th>
+</tr>
+</thead>
+
+<tbody id="tabelaLatonados">
+</tbody>
+
+</table>
+
+</section>
+<section
+id="dashboardLatonados"
+class="pagina oculto">
+
+<h2>Dashboard dos Latonados</h2>
+
+<div class="cards">
+
+<div class="card">
+    <h2 id="totalLatonados">0</h2>
+    <p>Total Bobinas</p>
+</div>
+
+<div class="card">
+    <h2 id="totalWS550">0</h2>
+    <p>WS550</p>
+</div>
+
+<div class="card">
+    <h2 id="totalWS750">0</h2>
+    <p>WS750</p>
+</div>
+
+<div class="card">
+    <h2 id="totalParado">0</h2>
+    <p>Parado</p>
+</div>
+
+<div class="card">
+    <h2 id="totalAguardando">0</h2>
+    <p>Aguardando Análise</p>
+</div>
+
+</div>
+
+</section>
+<section
+id="dashboardLatonados"
+class="pagina oculto">
+
+<h2>Dashboard dos Latonados</h2>
+
+<div class="cards">
+
+<div class="card">
+<h2 id="totalLatonados">0</h2>
+<p>Total Bobinas</p>
+</div>
+
+<div class="card">
+<h2 id="totalWS550">0</h2>
+<p>WS550</p>
+</div>
+
+<div class="card">
+<h2 id="totalWS750">0</h2>
+<p>WS750</p>
+</div>
+
+<div class="card">
+<h2 id="totalParado">0</h2>
+<p>Parado</p>
+</div>
+
+<div class="card">
+<h2 id="totalAguardando">0</h2>
+<p>Aguardando Análise</p>
+</div>
+
+</div>
+
+</section>
+
+<!-- USUÁRIOS -->
+<section
+id="editarCaixa"
+class="pagina oculto">
+
+<h2>Editar Caixa</h2>
+
+<input
+type="hidden"
+id="idxEditar">
+
+<label>Descrição</label>
+
+<input
+type="text"
+id="editarDescricao">
+
+<label>Bobina</label>
+
+<select id="editarBobina">
+
+<option>B40</option>
+
+<option>B60</option>
+
+<option>NÃO IDENTIFICADO</option>
+
+</select>
+
+<label>Categoria</label>
+
+<select id="editarCategoria">
+
+<option>SUCATA A PARTE</option>
+
+<option>RECUPERAÇÃO</option>
+
+<option>NÃO IDENTIFICADO</option>
+
+</select>
+
+<label>Peso</label>
+
+<input
+type="number"
+id="editarPeso">
+
+<label>Localização</label>
+
+<input
+type="text"
+id="editarLocalizacao">
+
+<label>Observação</label>
+
+<textarea
+id="editarObservacao"></textarea>
+
+<button onclick="salvarEdicaoCaixa()">
+
+Salvar Alteração
+
+</button>
+
+</section>
+<section
+id="usuarios"
+class="pagina oculto">
+
+<h2>Gerenciar Usuários</h2>
+
+<input
+type="text"
+id="novoUsuario"
+placeholder="Novo Usuário">
+
+<input
+type="password"
+id="novaSenha"
+placeholder="Senha">
+
+<button onclick="criarUsuario()">
+Criar Usuário
+</button>
+
+<table>
+
+<thead>
+
+<tr>
+<th>Usuário</th>
+<th>Ações</th>
+</tr>
+
+</thead>
+
+<tbody id="listaUsuarios">
+</tbody>
+
+</table>
+</tbody>
+
+</table>
+
+</section>
+
+<script type="module" src="firebase.js"></script>
+
+<script src="script.js"></script>
+
+</body>
+</html>
