@@ -729,6 +729,8 @@ async function importarExcel(event) {
 
                 categoria: linha["CAIXA DE"] || "",
 
+                tipoPallet: linha["Tipo Pallet"] || "NÃO INFORMADO",
+
                 peso: linha["Peso (kg)"] || 0,
 
                 usuario: linha["Usuário"] || "IMPORTACAO",
