@@ -167,9 +167,25 @@ placeholder="Descrição do Produto">
 
 <select id="bobina">
 
-<option>B60</option>
-<option>B40</option>
-<option>NÃO IDENTIFICADO</option>
+    <option value="">
+        Selecione
+    </option>
+
+    <option value="B40">
+        B40
+    </option>
+
+    <option value="B60">
+        B60
+    </option>
+
+    <option value="BP60">
+        BP60
+    </option>
+
+    <option value="BS80">
+        BS80
+    </option>
 
 </select>
 
@@ -207,10 +223,21 @@ type="number"
 id="peso"
 placeholder="Peso">
 
-<input
-type="text"
-id="localizacao"
-placeholder="Localização">
+<select id="localizacao">
+
+    <option value="">
+        Selecione a localização
+    </option>
+
+    <option value="LOGISTICA">
+        LOGÍSTICA
+    </option>
+
+    <option value="FABRICA">
+        FÁBRICA
+    </option>
+
+</select>
 
 <textarea
 id="observacao"
