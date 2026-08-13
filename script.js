@@ -258,6 +258,9 @@ return;
         categoria:
             document.getElementById("categoria").value,
 
+        tipoPallet:
+            document.getElementById("tipoPallet").value,
+            
         peso:
             document.getElementById("peso").value,
 
@@ -293,6 +296,7 @@ await window.addDoc(
         descricao: produto.descricao,
         bobina: produto.bobina,
         categoria: produto.categoria,
+        tipoPallet: produto.tipoPallet,
         peso: produto.peso,
         usuario: produto.usuario,
         localizacao: produto.localizacao,
