@@ -292,12 +292,18 @@ onchange="importarExcel(event)">
 </section>
 
 <!-- MODIFICAR -->
-
 <section
 id="modificar"
 class="pagina oculto">
 
 <h2>Modificar Produtos</h2>
+
+<input
+    type="text"
+    id="filtroEditarCaixa"
+    placeholder="Digite o número da caixa"
+    onkeyup="filtrarEditarCaixas()"
+>
 
 <table>
 
