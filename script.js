@@ -526,6 +526,59 @@ function carregarTabelaEditar() {
         `;
     });
 }
+function filtrarEditarCaixas(){
+
+    let filtro =
+    document.getElementById(
+        "filtroEditarCaixa"
+    )
+    .value
+    .toLowerCase();
+
+    let tabela =
+    document.getElementById(
+        "tabelaEditar"
+    );
+
+    tabela.innerHTML = "";
+
+    produtos
+    .filter(produto =>
+        String(produto.caixa)
+        .toLowerCase()
+        .includes(filtro)
+    )
+    .forEach((produto, index) => {
+
+        tabela.innerHTML += `
+
+        <tr>
+
+            <td>${produto.caixa}</td>
+
+            <td>${produto.descricao}</td>
+
+            <td>${produto.categoria}</td>
+
+            <td>
+
+                <button onclick="editarProduto(${index})">
+                    Editar
+                </button>
+
+                <button onclick="excluirProduto(${index})">
+                    Excluir
+                </button>
+
+            </td>
+
+        </tr>
+
+        `;
+
+    });
+
+}
 
 // =========================
 // EDITAR
