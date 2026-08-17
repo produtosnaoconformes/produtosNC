@@ -361,60 +361,45 @@ function carregarTabela() {
 
     if (!tabela) return;
 
-    tabela.innerHTML = "";
+    let html = "";
 
-    produtos.forEach((produto,index) => {
+produtos.forEach((produto,index) => {
 
-    tabela.innerHTML += `
-
+    html += `
     <tr>
-
         <td>${produto.caixa}</td>
-
         <td>${produto.descricao}</td>
-
         <td>${produto.bobina}</td>
-
         <td>${produto.categoria}</td>
-
         <td>${produto.peso}</td>
-
         <td>${produto.usuario}</td>
-
         <td>${produto.localizacao}</td>
-
         <td>${produto.observacao || ""}</td>
-
         <td>${produto.usuario || ""}</td>
-
         <td>${produto.dataCadastro || ""}</td>
-
         <td>${produto.alteradoPor || ""}</td>
-
         <td>${produto.dataAlteracao || ""}</td>
-
         <td>
-
             <button
-            class="btn-editar"
-            onclick="editarProduto(${index})">
-            ✏️
+                class="btn-editar"
+                onclick="editarProduto(${index})">
+                ✏️
             </button>
 
             <button
-            class="btn-excluir"
-            onclick="excluirProduto(${index})">
-            🗑️
+                class="btn-excluir"
+                onclick="excluirProduto(${index})">
+                🗑️
             </button>
-
         </td>
-
     </tr>
-
     `;
 
-});}
- 
+});
+
+tabela.innerHTML = html;
+
+}
 
 // =========================
 // FILTROS
@@ -495,12 +480,11 @@ function carregarTabelaEditar() {
 
     if (!tabela) return;
 
-    tabela.innerHTML = "";
+    let html = "";
 
     produtos.forEach((produto, index) => {
 
-        tabela.innerHTML += `
-
+        html += `
         <tr>
 
             <td>${produto.caixa}</td>
@@ -512,23 +496,22 @@ function carregarTabelaEditar() {
             <td>
 
                 <button onclick="editarProduto(${index})">
-
                     Editar
-
                 </button>
 
                 <button onclick="excluirProduto(${index})">
-
                     Excluir
-
                 </button>
 
             </td>
 
         </tr>
-
         `;
+
     });
+
+    tabela.innerHTML = html;
+
 }
 function filtrarEditarCaixas(){
 
@@ -1074,7 +1057,7 @@ function listarLatonados(){
 
     if(!tabela) return;
 
-    tabela.innerHTML = "";
+    let html = "";
 
     latonados
     .filter(x =>
@@ -1084,7 +1067,7 @@ function listarLatonados(){
     )
     .forEach((item,index)=>{
 
-        tabela.innerHTML += `
+        html += `
 
         <tr>
 
@@ -1116,6 +1099,8 @@ function listarLatonados(){
         `;
 
     });
+
+    tabela.innerHTML = html;
 
 }
 
@@ -1449,7 +1434,6 @@ async function carregarUsuariosFirebase(){
 
         });
 
-        await carregarUsuariosFirebase();
 
         console.log(
         "USUÁRIOS CARREGADOS"
@@ -1462,44 +1446,7 @@ async function carregarUsuariosFirebase(){
     }
 
 }
-async function carregarUsuariosFirebase(){
 
-    try{
-
-        const snapshot =
-        await window.getDocs(
-            window.collection(
-                window.db,
-                "usuarios"
-            )
-        );
-
-        usuarios = [];
-
-        snapshot.forEach(doc => {
-
-            usuarios.push({
-                id: doc.id,
-                ...doc.data()
-            });
-
-        });
-
-        listarUsuarios();
-
-        console.log(
-        "USUARIOS CARREGADOS"
-        );
-
-    }catch(erro){
-
-        console.error(
-        erro
-        );
-
-    }
-
-}
 async function registrarHistorico(
     acao,
     caixa = "",
@@ -1543,5 +1490,27 @@ async function registrarHistorico(
         );
 
     }
+
+}
+let timerProdutos;
+let timerEditar;
+
+function debounceFiltroProdutos(){
+
+    clearTimeout(timerProdutos);
+
+    timerProdutos = setTimeout(() => {
+        filtrarProdutos();
+    }, 300);
+
+}
+
+function debounceFiltroEditar(){
+
+    clearTimeout(timerEditar);
+
+    timerEditar = setTimeout(() => {
+        filtrarEditarCaixas();
+    }, 300);
 
 }
