@@ -263,13 +263,13 @@ class="pagina oculto">
 type="text"
 id="filtroCaixa"
 placeholder="Pesquisar Caixa"
-onkeyup="filtrarProdutos()">
+oninput="debounceFiltroProdutos()">
 
 <input
 type="text"
 id="filtroDescricao"
 placeholder="Pesquisar Descrição"
-onkeyup="filtrarProdutos()">
+oninput="debounceFiltroProdutos()">
 
 <select
 id="filtroCategoria"
@@ -350,7 +350,7 @@ class="pagina oculto">
     type="text"
     id="filtroEditarCaixa"
     placeholder="Digite o número da caixa"
-    onkeyup="filtrarEditarCaixas()"
+    oninput="debounceFiltroEditar()"
 >
 
 <table>
